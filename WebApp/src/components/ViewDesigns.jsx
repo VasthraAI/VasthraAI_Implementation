@@ -13,8 +13,9 @@ const ViewDesigns = () => {
         if (designData) {
             try {
                 const { generated_image, original_sketch } = JSON.parse(designData);
-                setGeneratedImage(generated_image);
-                setOriginalSketch(original_sketch);
+                // Store the full URLs
+                setGeneratedImage(`http://localhost:8000${generated_image}`);
+                setOriginalSketch(`http://localhost:8000${original_sketch}`);
             } catch (error) {
                 console.error("Error parsing design data:", error);
                 navigate("/");
@@ -32,9 +33,7 @@ const ViewDesigns = () => {
     const handleDownload = () => {
         if (!generatedImage) return;
         
-        const fullUrl = `http://localhost:8000${generatedImage}`;
-        
-        fetch(fullUrl)
+        fetch(generatedImage)
             .then(response => response.blob())
             .then(blob => {
                 const url = window.URL.createObjectURL(blob);
@@ -63,11 +62,13 @@ const ViewDesigns = () => {
                         <div className="flex flex-col items-center">
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">Original Sketch</h3>
                             {originalSketch ? (
-                                <img 
-                                    src={`http://localhost:8000${originalSketch}`} 
-                                    alt="Original Sketch" 
-                                    className="object-cover w-full h-auto max-h-80 rounded-lg" 
-                                />
+                                <div className="aspect-square w-full relative">
+                                    <img 
+                                        src={originalSketch} 
+                                        alt="Original Sketch" 
+                                        className="absolute inset-0 w-full h-full object-contain rounded-lg" 
+                                    />
+                                </div>
                             ) : (
                                 <p>Loading sketch...</p>
                             )}
@@ -77,11 +78,13 @@ const ViewDesigns = () => {
                         <div className="flex flex-col items-center">
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">Generated Design</h3>
                             {generatedImage ? (
-                                <img 
-                                    src={`http://localhost:8000${generatedImage}`} 
-                                    alt="Generated Design" 
-                                    className="object-cover w-full h-auto max-h-80 rounded-lg" 
-                                />
+                                <div className="aspect-square w-full relative">
+                                    <img 
+                                        src={generatedImage} 
+                                        alt="Generated Design" 
+                                        className="absolute inset-0 w-full h-full object-contain rounded-lg" 
+                                    />
+                                </div>
                             ) : (
                                 <p>Loading generated design...</p>
                             )}
