@@ -10,9 +10,12 @@ from sketch_to_image_gan import Generator  # Import your enhanced Generator
 # Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# Get the absolute path to the model directory
+MODEL_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Load the trained generator
 generator = Generator().to(device)
-generator.load_state_dict(torch.load("generator.pth", map_location=device))
+generator.load_state_dict(torch.load(os.path.join(MODEL_DIR, "generator.pth"), map_location=device))
 generator.eval()
 
 # Define image transformations (same as training)
@@ -40,6 +43,10 @@ def preprocess_sketch(sketch_path):
 
 def generate_image(sketch_path, output_dir="generated_images", enhance_sketch=True, ensemble=True):
     """Generate an image from a sketch with optional enhancements."""
+    # Make output_dir absolute if it's relative
+    if not os.path.isabs(output_dir):
+        output_dir = os.path.join(MODEL_DIR, output_dir)
+        
     # Ensure the output directory exists
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)

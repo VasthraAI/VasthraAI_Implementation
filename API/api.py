@@ -5,9 +5,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
-# Import your GAN function
+# Determine the root directory of the project
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_DIR = os.path.join(ROOT_DIR, "Model")
+
+# Add Model directory to Python path
 import sys
-sys.path.append("../Model")  # Add Model directory to Python path
+sys.path.append(MODEL_DIR)  # Add Model directory to Python path
+
+# Import your GAN function
 from generate_image import generate_image
 
 app = FastAPI(title="VasthraAI API")
@@ -21,9 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Create necessary directories
-UPLOAD_DIR = "../Model/uploaded_sketches"
-OUTPUT_DIR = "../Model/generated_images"
+# Create necessary directories with absolute paths
+UPLOAD_DIR = os.path.join(MODEL_DIR, "uploaded_sketches")
+OUTPUT_DIR = os.path.join(MODEL_DIR, "generated_images")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -57,7 +63,11 @@ async def generate_design(file: UploadFile = File(...)):
         }
         
     except Exception as e:
+        print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
+    print(f"Starting server with upload dir: {UPLOAD_DIR}")
+    print(f"Output dir: {OUTPUT_DIR}")
+    print(f"Model dir: {MODEL_DIR}")
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
