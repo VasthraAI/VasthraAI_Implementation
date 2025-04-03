@@ -7,6 +7,8 @@ const UploadPage = () => {
   const [error, setError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
+  const [generator, setGenerator] = useState("Generator 1");
+  
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -135,6 +137,19 @@ const UploadPage = () => {
               {isUploading ? "Processing..." : "Generate Design"}
             </button>
           </div>
+          <div className="mt-6 flex items-center gap-4">
+            <label className="text-gray-900 font-semibold">Select Generator:</label>
+            <select 
+              value={generator} 
+              onChange={(e) => setGenerator(e.target.value)}
+              className="border border-gray-300 rounded-lg backdrop-blur-3xl text-violet-950 px-4 py-2 cursor-pointer"
+            >
+                <option>Generator 1</option>
+                <option>Generator 2</option>
+                <option>Generator 3</option>
+                <option>Generator 4</option>
+              </select>
+            </div>
         </div>
       </div>
     </div>
