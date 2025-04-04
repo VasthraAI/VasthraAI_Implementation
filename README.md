@@ -9,6 +9,26 @@ Here's a step-by-step guide to set up VasthraAI with the web app.
 git clone https://github.com/VasthraAI/VasthraAI_Implementation.git
 ```
 
+### For machines without a GPU
+
+Sometimes, the pytorch versions in the requirements do not work with machines without CUDA support. To fix this, checkout the no-gpu branch
+```bash
+git checkout no-gpu
+```
+
+
+## Set up the virtual environment
+
+1. Run the virtal environment.
+* On Windows:
+```bash
+venv\Scripts\activate
+```
+* On Linux
+```bash
+source venv/bin/activate
+```
+
 ## Set up the FastAPI backend
 
 1. Navigate to the /API directory

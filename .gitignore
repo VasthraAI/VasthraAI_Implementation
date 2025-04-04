@@ -1,1 +1,5 @@
 venv/
+Model/generated_images/*
+!Model/generated_images/
+Model/uploaded_sketches/*
+!Model/uploaded_sketches/
