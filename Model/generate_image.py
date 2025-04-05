@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 import argparse
 import numpy as np
+import cv2  # Added for sketch preprocessing
 from sketch_to_image_gan import Generator  # Import your enhanced Generator
 
 # Set device
@@ -28,12 +29,19 @@ transform = transforms.Compose([
 
 def preprocess_sketch(sketch_path):
     """Apply preprocessing to enhance sketch quality before generation."""
-    sketch = Image.open(sketch_path).convert("L")  # Load as grayscale
+    # Load the input image and generate a sketch using OpenCV
+    image = cv2.imread(sketch_path, cv2.IMREAD_GRAYSCALE)  # Convert to grayscale
+    if image is None:
+        raise ValueError(f"Could not load image at {sketch_path}")
     
-    # Convert to numpy for processing
+    blurred = cv2.GaussianBlur(image, (5, 5), 0)  # Reduce noise
+    edges = cv2.Canny(blurred, 50, 150)  # Detect edges
+    
+    # Convert to PIL image
+    sketch = Image.fromarray(edges)
+    
+    # Enhance contrast (original preprocessing logic)
     sketch_np = np.array(sketch)
-    
-    # Enhance contrast
     sketch_np = np.clip((sketch_np.astype(np.float32) - 128) * 1.5 + 128, 0, 255).astype(np.uint8)
     
     # Convert back to PIL
