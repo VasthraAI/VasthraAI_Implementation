@@ -145,9 +145,9 @@ const UploadPage = () => {
               className="border border-gray-300 rounded-lg backdrop-blur-3xl text-violet-950 px-4 py-2 cursor-pointer"
             >
                 <option>Generator 1</option>
-                <option>Generator 2</option>
+                {/* <option>Generator 2</option>
                 <option>Generator 3</option>
-                <option>Generator 4</option>
+                <option>Generator 4</option> */}
               </select>
             </div>
         </div>
