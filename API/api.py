@@ -12,7 +12,7 @@ logger = logging.getLogger("vasthra-api")
 
 # Determine the root directory of the project
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_DIR = os.path.join(ROOT_DIR, "Model")
+MODEL_DIR = os.path.join(ROOT_DIR, "Model_1")
 
 # Add Model directory to Python path
 import sys

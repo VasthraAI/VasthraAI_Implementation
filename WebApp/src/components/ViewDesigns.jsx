@@ -60,7 +60,7 @@ const ViewDesigns = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                         {/* Original Sketch */}
                         <div className="flex flex-col items-center">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Original Sketch</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Contrast Enhanced Sketch</h3>
                             {originalSketch ? (
                                 <div className="aspect-square w-full relative">
                                     <img 
