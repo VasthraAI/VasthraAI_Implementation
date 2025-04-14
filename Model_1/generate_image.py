@@ -15,7 +15,7 @@ MODEL_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Load the trained generator
 generator = Generator().to(device)
-generator.load_state_dict(torch.load(os.path.join(MODEL_DIR, "generator.pth"), map_location=device))
+generator.load_state_dict(torch.load(os.path.join(MODEL_DIR, "generator_1.pth"), map_location=device))
 generator.eval()
 
 # Define image transformations (same as training)
