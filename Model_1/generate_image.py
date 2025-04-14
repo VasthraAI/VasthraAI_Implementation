@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 import argparse
 import numpy as np
+import cv2  # Add OpenCV import
 
 # Dynamic import based on generator number
 def load_generator_module(generator_num):
@@ -29,18 +30,24 @@ transform = transforms.Compose([
 ])
 
 def preprocess_sketch(sketch_path):
-    """Apply preprocessing to enhance sketch quality before generation."""
-    sketch = Image.open(sketch_path).convert("L")  # Load as grayscale
-    
-    # Convert to numpy for processing
-    sketch_np = np.array(sketch)
-    
-    # Enhance contrast
-    sketch_np = np.clip((sketch_np.astype(np.float32) - 128) * 1.5 + 128, 0, 255).astype(np.uint8)
-    
-    # Convert back to PIL
-    enhanced_sketch = Image.fromarray(sketch_np)
-    
+    """Apply preprocessing to enhance sketch quality before generation using OpenCV."""
+    # Load the image using OpenCV in grayscale
+    image = cv2.imread(sketch_path, cv2.IMREAD_GRAYSCALE)
+    if image is None:
+        raise ValueError(f"Failed to load image at {sketch_path}")
+
+    # Apply Gaussian blur to reduce noise
+    blurred = cv2.GaussianBlur(image, (5, 5), 0)
+
+    # Detect edges using Canny
+    edges = cv2.Canny(blurred, 50, 150)
+
+    # Optional: Enhance contrast further (if needed)
+    edges = np.clip((edges.astype(np.float32) - 128) * 1.5 + 128, 0, 255).astype(np.uint8)
+
+    # Convert back to PIL Image
+    enhanced_sketch = Image.fromarray(edges)
+
     return enhanced_sketch
 
 def generate_image(sketch_path, output_dir="generated_images", enhance_sketch=True, ensemble=True, generator_num=1):
