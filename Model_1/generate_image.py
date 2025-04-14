@@ -13,11 +13,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Get the absolute path to the model directory
 MODEL_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Load the trained generator
-generator = Generator().to(device)
-generator.load_state_dict(torch.load(os.path.join(MODEL_DIR, "generator_1.pth"), map_location=device))
-generator.eval()
-
 # Define image transformations (same as training)
 transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),  # Ensure single-channel input
@@ -41,7 +36,7 @@ def preprocess_sketch(sketch_path):
     
     return enhanced_sketch
 
-def generate_image(sketch_path, output_dir="generated_images", enhance_sketch=True, ensemble=True):
+def generate_image(sketch_path, output_dir="generated_images", enhance_sketch=True, ensemble=True, generator_num=1):
     """Generate an image from a sketch with optional enhancements."""
     # Make output_dir absolute if it's relative
     if not os.path.isabs(output_dir):
@@ -50,6 +45,17 @@ def generate_image(sketch_path, output_dir="generated_images", enhance_sketch=Tr
     # Ensure the output directory exists
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+    
+    # Load the specified generator model
+    generator = Generator().to(device)
+    generator_path = os.path.join(MODEL_DIR, f"generator_{generator_num}.pth")
+    
+    # Check if the generator file exists
+    if not os.path.exists(generator_path):
+        raise FileNotFoundError(f"Generator model not found: {generator_path}")
+    
+    generator.load_state_dict(torch.load(generator_path, map_location=device))
+    generator.eval()
 
     # Generate the timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -131,7 +137,14 @@ if __name__ == "__main__":
         action='store_true',
         help="Use ensemble generation for better results."
     )
+    parser.add_argument(
+        "--generator_num",
+        type=int,
+        default=1,
+        choices=[1, 2, 3],
+        help="Generator model to use (1, 2, or 3)."
+    )
     args = parser.parse_args()
 
     # Generate the image
-    generate_image(args.sketch_path, args.output_dir, args.enhance, args.ensemble)
+    generate_image(args.sketch_path, args.output_dir, args.enhance, args.ensemble, args.generator_num)

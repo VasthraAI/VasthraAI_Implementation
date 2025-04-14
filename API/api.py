@@ -1,6 +1,6 @@
 import os
 import shutil
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
@@ -46,7 +46,7 @@ app.mount("/images", StaticFiles(directory=OUTPUT_DIR), name="images")
 app.mount("/sketches", StaticFiles(directory=UPLOAD_DIR), name="sketches")
 
 @app.post("/generate/")
-async def generate_design(file: UploadFile = File(...)):
+async def generate_design(file: UploadFile = File(...), generator: str = Form("Generator 1")):
     try:
         # Generate a unique filename to avoid conflicts
         filename_parts = os.path.splitext(file.filename)
@@ -59,11 +59,21 @@ async def generate_design(file: UploadFile = File(...)):
         with open(sketch_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         
+        # Map the generator selection to model number
+        generator_num = 1  # Default
+        if generator == "Generator 2":
+            generator_num = 2
+        elif generator == "Generator 3":
+            generator_num = 3
+            
+        logger.info(f"Using generator model: {generator_num}")
+        
         # Generate the image using your existing generate_image function
         logger.info(f"Generating image from sketch: {sketch_path}")
         output_path, sketch_output_path = generate_image(
             sketch_path=sketch_path,
-            output_dir=OUTPUT_DIR
+            output_dir=OUTPUT_DIR,
+            generator_num=generator_num  # Pass the generator number
         )
         
         # Log the output paths

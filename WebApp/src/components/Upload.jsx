@@ -48,6 +48,7 @@ const UploadPage = () => {
     // Create FormData and append the file
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("generator", generator);  // Send selected generator to backend
 
     try {
       const response = await fetch("http://localhost:8000/generate/", {
