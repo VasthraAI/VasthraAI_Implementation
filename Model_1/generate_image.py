@@ -5,7 +5,14 @@ import os
 from datetime import datetime
 import argparse
 import numpy as np
-from sketch_to_image_gan import Generator  # Import your enhanced Generator
+
+# Dynamic import based on generator number
+def load_generator_module(generator_num):
+    if generator_num == 2:
+        from sketch_to_image_gan_2 import Generator
+    else:
+        from sketch_to_image_gan import Generator
+    return Generator
 
 # Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -47,6 +54,7 @@ def generate_image(sketch_path, output_dir="generated_images", enhance_sketch=Tr
         os.makedirs(output_dir)
     
     # Load the specified generator model
+    Generator = load_generator_module(generator_num)
     generator = Generator().to(device)
     generator_path = os.path.join(MODEL_DIR, f"generator_{generator_num}.pth")
     
